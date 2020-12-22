@@ -1,5 +1,7 @@
 #include "heap.h" 
-#include <stdbool.h> 
+#include <stdbool.h>
+#include <stdlib.h> 
+#include <string.h> 
 
 #define TAMANIO_INICIAL 20 
 #define FACTOR_REDUCCION 0.25 
@@ -106,7 +108,19 @@ bool heap_esta_vacio(const heap_t *heap){
  * Pre: Recibe un vector de elementos, la cantidad de elementos, la posicion actual a redimensionar
  * y una funcion de comparacion de elementos previamente vàlidos
  */
-void upheapear(void ** elementos, size_t cantidad_elementos, cmp_func_t cmp){
+void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
+	  
+    if (posicion_act == 0){
+        return;
+	}
+
+	size_t posicion_padre = (posicion_act - 1) / 2;
+    
+    if (cmp(elementos[posicion_act], elementos[posicion_padre]) > 0) {
+        intercambio(elementos[posicion_act], elementos[posicion_padre]);
+        upheapear(elementos, posicion_padre, cmp);
+    }
+
 
 }
 
@@ -117,7 +131,34 @@ void upheapear(void ** elementos, size_t cantidad_elementos, cmp_func_t cmp){
  *
  */
 void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, size_t posicion_act){
+	if (posicion_act >= cantidad_elementos){
+        return;
+	}
+	size_t pos_hijo_der  = (2 * posicion_act) + 2;
+	size_t pos_hijo_izq = (2 * posicion_act) + 1;
+	size_t mayor_posicion  = posicion_mayor(elementos, cantidad_elementos, cmp, posicion_act, pos_hijo_izq, pos_hijo_der);
+
+    if(mayor_posicion != posicion_act){
+        intercambio(elementos[posicion_act], elementos[mayor_posicion]);
+        downheap(elementos, cmp, cantidad_elementos, mayor_posicion);
+    }
 }
+
+
+
+size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
+    size_t posicion_maxima = posicion_act;
+    if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
+		posicion_maxima = pos_izq;
+	}
+
+    if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
+		posicion_maxima = pos_der;
+	}
+
+    return posicion_maxima;
+}
+
 
 /*
  *Devuelve verdadero si hay que redimensionar a un mayor tamaño el heap
