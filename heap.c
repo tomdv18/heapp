@@ -55,7 +55,7 @@ heap_t *heap_crear(cmp_func_t cmp){
  *
  * Excepto por la complejidad, es equivalente a crear un heap vacío y encolar
  * los valores de uno en uno
-*/
+ */
 heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
 		if (cmp == NULL){
 		return NULL;
@@ -76,15 +76,17 @@ heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
 	return heap;
 }
 
+
 /* Elimina el heap, llamando a la función dada para cada elemento del mismo.
  * El puntero a la función puede ser NULL, en cuyo caso no se llamará.
  * Post: se llamó a la función indicada con cada elemento del heap. El heap
  * dejó de ser válido. */
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){	
 	if (destruir_elemento != NULL){
-		size_t i = heap->cantidad_total;
+		size_t i = heap->cantidad_total - 1;
 		while(!heap_esta_vacio(heap)){
 			destruir_elemento(heap->elementos[i]);
+			heap->cantidad_total--;
 			i--;
 		}
 	}
@@ -102,6 +104,17 @@ size_t heap_cantidad(const heap_t *heap){
 bool heap_esta_vacio(const heap_t *heap){
 	return(heap->cantidad_total == 0);
 }
+
+/*
+ * Esta funcion intercambia de lugar dos valores
+ * Esta funcion es practicamente identica a la del TP0
+ */
+void intercambio(void** x, void** y) {
+	void* auxiliar = *y;
+	*y = *x;
+	*x = auxiliar; 
+}
+
 
 /*
  *Funcion que aplica upheap al vector de elementos
@@ -123,6 +136,18 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 
 
 }
+size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
+    size_t posicion_maxima = posicion_act;
+    if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
+		posicion_maxima = pos_izq;
+	}
+
+    if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
+		posicion_maxima = pos_der;
+	}
+
+    return posicion_maxima;
+}
 
 /*
  *Funcion que aplica downheap al vector de elementos
@@ -140,38 +165,26 @@ void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, s
 
     if(mayor_posicion != posicion_act){
         intercambio(elementos[posicion_act], elementos[mayor_posicion]);
-        downheap(elementos, cmp, cantidad_elementos, mayor_posicion);
+        downheapear(elementos, cmp, cantidad_elementos, mayor_posicion);
     }
 }
 
 
 
-size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
-    size_t posicion_maxima = posicion_act;
-    if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
-		posicion_maxima = pos_izq;
-	}
-
-    if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
-		posicion_maxima = pos_der;
-	}
-
-    return posicion_maxima;
-}
 
 
 /*
  *Devuelve verdadero si hay que redimensionar a un mayor tamaño el heap
  */
 bool hay_que_agrandar(const heap_t * heap){
-	return ((heap->cantidad_elementos + 1) == heap_tamanio);
+	return ((heap->cantidad_total + 1) == heap->tamanio);
 }
 
 /*
  * Devuelve verdadero si hay que redimensionar a un menor tamaño el heap
  */
 bool hay_que_achicar(const heap_t * heap){
-	return ((heap->cantidad_elementos/heap->tamanio <= FACTOR_REDUCCION) && heap->tamanio > TAMANIO_INICIAL);
+	return ((heap->cantidad_total/heap->tamanio <= FACTOR_REDUCCION) && heap->tamanio > TAMANIO_INICIAL);
 
 }
 
@@ -200,7 +213,9 @@ bool heap_encolar(heap_t *heap, void *elem){
 	}
 	heap->elementos[heap->cantidad_total] = elem;
 	heap->cantidad_total++;
-	upheapear(heap->elementos, heap->cantidad_total, heap->comparador);
+	if (heap->cantidad_total != 1){
+		upheapear(heap->elementos, heap->cantidad_total, heap->comparador);
+	}
 	return true;
 }
 
@@ -216,16 +231,6 @@ void *heap_ver_max(const heap_t *heap){
 }
 
 
-/*
- * Esta funcion intercambia de lugar dos valores
- * Esta funcion es practicamente identica a la del TP0
- */
-void intercambio(void *x, void *y) {
-	void* auxiliar = *y;
-	*y = *x;
-	*x = auxiliar; 
-}
-
 /* Elimina el elemento con máxima prioridad, y lo devuelve.
  * Si el heap esta vacío, devuelve NULL.
  * Pre: el heap fue creado.
@@ -236,8 +241,8 @@ void *heap_desencolar(heap_t *heap){
 		return NULL;
 	}
 	void * dato = heap->elementos[0];
-	heap->cantidad_total--:
-	if (!heap_esta_vacio){
+	heap->cantidad_total--;
+	if (!heap_esta_vacio(heap)){
 		intercambio(heap->elementos[0], heap->elementos[heap->cantidad_total]);
 		downheapear(heap->elementos, heap->comparador, heap->cantidad_total, 0);
 	}
