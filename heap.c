@@ -118,7 +118,7 @@ void intercambio(void** x, void** y) {
 
 /*
  *Funcion que aplica upheap al vector de elementos
- * Pre: Recibe un vector de elementos, la cantidad de elementos, la posicion actual a redimensionar
+ * Pre: Recibe un vector de elementos, la posicion actual 
  * y una funcion de comparacion de elementos previamente vàlidos
  */
 void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
@@ -136,6 +136,11 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 
 
 }
+
+/*
+	Recibe, el vector de elementos, la cantidad, la funcion de comparacion, la posicion actual y las de su izquierda y derecha para asi comparar.
+	Devuelve la posicion que es mayor a la actual,
+*/
 size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
     size_t posicion_maxima = posicion_act;
     if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
@@ -151,7 +156,7 @@ size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t pos
 
 /*
  *Funcion que aplica downheap al vector de elementos
- * Pre: Recibe un vector de elementos, la cantidad de elementos, la posicion actual a redimensionar
+ * Pre: Recibe un vector de elementos, la cantidad de elementos, la posicion actual 
  * y una funcion de comparacion de elementos previamente vàlidos
  *
  */
@@ -257,10 +262,28 @@ void *heap_desencolar(heap_t *heap){
 }
 
 // -----------------------------------------------------------------------------//
+/* Funcion que garantiza propiedad de heap */
+void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
+
+	int cant = (int)cantidad_elementos/2;
+    for(int i = cant; i >= 0; i--){
+        downheapear(elementos,cmp, cantidad_elementos, i);
+    }
+
+}
 
 /* Función de heapsort genérica. Esta función ordena mediante heap_sort
  * un arreglo de punteros opacos, para lo cual requiere que se
  * le pase una función de comparación. Modifica el arreglo "in-place".
  * Nótese que esta función NO es formalmente parte del TAD Heap.
  */
-void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp);
+void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
+	//primero siempre convierto el arreglo en heap
+	heapify(elementos,cant,cmp);
+
+    for (size_t i = cant - 1; i > 0; i--) {
+		intercambio(elementos[0], elementos[i]);
+		downheapear(elementos,cmp, i, 0);
+    }
+
+}
