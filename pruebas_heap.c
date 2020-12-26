@@ -69,20 +69,35 @@ static void prueba_encolado_un_elemento(){
 }
 
 static void prueba_reemplazo_mayor(){
-	int primero = 88;
-	int segundo = 100;
 
-	int * pt1 = &primero;
-	int * pt2 = &segundo;
+	char* primero = "aaa";
+	char* segundo = "bbb";
+
 	heap_t * heap = heap_crear(comparacion);
-	heap_encolar(heap, pt2);
+	heap_encolar(heap, primero);
 	print_test("Prueba cantidad correcta", heap_cantidad(heap) == 1);
 	void * desen = heap_ver_max(heap);
-	
-	print_test("Maximo correcto", (pt2  == desen));
-	print_test("Insertar otro elemento", heap_encolar(heap, pt1));
+	print_test("Maximo correcto",(strcmp(primero, (char*)desen) == 0));
+	print_test("Insertar otro elemento", heap_encolar(heap, segundo));
 	desen = heap_ver_max(heap);
-	print_test("Maximo correcto", (pt1 == desen));
+	print_test("Maximo correcto",(strcmp(segundo, (char*)desen) == 0));
+	heap_destruir(heap, NULL);
+}
+
+static void prueba_desencolado_mayor(){
+
+	char* primero = "aaa";
+	char* segundo = "bbb";
+
+	heap_t * heap = heap_crear(comparacion);
+	heap_encolar(heap, primero);
+	heap_encolar(heap, segundo);
+	void * desen = heap_ver_max(heap);
+	print_test("Maximo tras encolado correcto",(strcmp(segundo, (char*)desen) == 0));
+	desen = heap_desencolar(heap);
+	print_test("Desencolado correcto",(strcmp(segundo, (char*)desen) == 0));
+	desen = heap_ver_max(heap);
+	print_test("Maximo tras esencolado correcto",(strcmp(primero, (char*)desen) == 0));
 	heap_destruir(heap, NULL);
 }
 
@@ -97,4 +112,5 @@ void  pruebas_heap_estudiante(){
 	prueba_encolado_desencolado_un_elemento();
 	prueba_encolado_un_elemento();
 	prueba_reemplazo_mayor();
+	prueba_desencolado_mayor();
 }

@@ -109,10 +109,10 @@ bool heap_esta_vacio(const heap_t *heap){
  * Esta funcion intercambia de lugar dos valores
  * Esta funcion es practicamente identica a la del TP0
  */
-void intercambio(void ** primero, void ** segundo) {
-	void * auxiliar = *primero;
-	*primero = *segundo;
-	*segundo = auxiliar; 
+void intercambio(void ** elementos, size_t primero, size_t segundo) {
+	void * auxiliar = elementos[primero];
+	elementos[primero] = elementos[segundo];
+	elementos[segundo] = auxiliar; 
 }
 
 
@@ -129,8 +129,8 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 
 	size_t posicion_padre = (posicion_act - 1) / 2;
     
-    if (cmp(elementos[posicion_act], elementos[posicion_padre]) < 0) {
-        intercambio(elementos[posicion_act], elementos[posicion_padre]);
+    if (cmp(elementos[posicion_act], elementos[posicion_padre]) > 0) {
+        intercambio(elementos, posicion_act, posicion_padre);
         upheapear(elementos, posicion_padre, cmp);
     }
 
@@ -169,7 +169,7 @@ void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, s
 	size_t mayor_posicion  = posicion_mayor(elementos, cantidad_elementos, cmp, posicion_act, pos_hijo_izq, pos_hijo_der);
 
     if(mayor_posicion != posicion_act){
-        intercambio(elementos[posicion_act], elementos[mayor_posicion]);
+        intercambio(elementos, posicion_act, mayor_posicion);
         downheapear(elementos, cmp, cantidad_elementos, mayor_posicion);
     }
 }
@@ -252,7 +252,7 @@ void *heap_desencolar(heap_t *heap){
 			heap->elementos[0] = heap->elementos[heap->cantidad_total];
 		}
 		else{
-			intercambio(heap->elementos[0], heap->elementos[heap->cantidad_total]);
+			intercambio(heap->elementos, 0, heap->cantidad_total + 1);
 			downheapear(heap->elementos, heap->comparador, heap->cantidad_total + 1, 0);
 		}
 	}
@@ -287,7 +287,7 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
 	heapify(elementos,cant,cmp);
 
     for (size_t i = cant - 1; i > 0; i--) {
-		intercambio(elementos[0], elementos[i]);
+		intercambio(elementos, 0, i);
 		downheapear(elementos,cmp, i, 0);
     }
 
