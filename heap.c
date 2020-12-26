@@ -141,7 +141,7 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 	Recibe, el vector de elementos, la cantidad, la funcion de comparacion, la posicion actual y las de su izquierda y derecha para asi comparar.
 	Devuelve la posicion que es mayor a la actual,
 */
-size_t posicion_mayor(void **elementos, int cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
+size_t posicion_mayor(void **elementos, size_t cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
     size_t posicion_maxima = posicion_act;
     if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
 		posicion_maxima = pos_izq;
@@ -272,7 +272,7 @@ void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
 
 	int cant = (int)cantidad_elementos/2;
     for(int i = cant; i >= 0; i--){
-        downheapear(elementos,cmp, cantidad_elementos, i);
+        downheapear(elementos,cmp, cantidad_elementos, (size_t)i);
     }
 
 }

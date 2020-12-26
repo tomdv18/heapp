@@ -13,10 +13,10 @@
  *   mayor a 0  si  a > b
  */
 int comparacion(const void * a, const void * b){
-	if ((int)a < (int) b){
+	if (a <  b){
 		return -1;
 	}
-	if ((int)a > (int) b){
+	if (a >  b){
 		return 1;
 	}
 	return 0;
@@ -102,15 +102,27 @@ static void prueba_desencolado_mayor(){
 }
 
 
+static void prueba_heapsort(){
+	const size_t cant = 7;
+	bool ok = true;
+	char* ordenado[] = {"aaa","aax", "abb","bta", "btw", "ssd", "usb"};
+	char* elementos[] = {"aaa", "ssd","bta", "usb", "btw", "aax","abb"};
+	heap_sort((void**)elementos, cant, comparacion);
+	for (size_t i = 0; i < cant; ++i) {
+		
+		ok = strcmp(ordenado[i], elementos[i]) == 0;
+	}
+	print_test("Ordenamiento correcto usando Heapsort", ok);
 
+}
 
-
-
-void  pruebas_heap_estudiante(){
+void pruebas_heap_estudiante(){
 	pruebas_creado();
 	prueba_crear_sin_funcion_comparacion();
 	prueba_encolado_desencolado_un_elemento();
 	prueba_encolado_un_elemento();
 	prueba_reemplazo_mayor();
 	prueba_desencolado_mayor();
+	prueba_heapsort();
+
 }
