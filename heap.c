@@ -109,10 +109,10 @@ bool heap_esta_vacio(const heap_t *heap){
  * Esta funcion intercambia de lugar dos valores
  * Esta funcion es practicamente identica a la del TP0
  */
-void intercambio(void** x, void** y) {
-	void* auxiliar = *y;
-	*y = *x;
-	*x = auxiliar; 
+void intercambio(void ** primero, void ** segundo) {
+	void * auxiliar = *primero;
+	*primero = *segundo;
+	*segundo = auxiliar; 
 }
 
 
@@ -129,7 +129,7 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 
 	size_t posicion_padre = (posicion_act - 1) / 2;
     
-    if (cmp(elementos[posicion_act], elementos[posicion_padre]) > 0) {
+    if (cmp(elementos[posicion_act], elementos[posicion_padre]) < 0) {
         intercambio(elementos[posicion_act], elementos[posicion_padre]);
         upheapear(elementos, posicion_padre, cmp);
     }
@@ -219,7 +219,7 @@ bool heap_encolar(heap_t *heap, void *elem){
 	heap->elementos[heap->cantidad_total] = elem;
 	heap->cantidad_total++;
 	if (heap->cantidad_total != 1){
-		upheapear(heap->elementos, heap->cantidad_total, heap->comparador);
+		upheapear(heap->elementos, heap->cantidad_total - 1, heap->comparador);
 	}
 	return true;
 }
@@ -248,8 +248,13 @@ void *heap_desencolar(heap_t *heap){
 	void * dato = heap->elementos[0];
 	heap->cantidad_total--;
 	if (!heap_esta_vacio(heap)){
-		intercambio(heap->elementos[0], heap->elementos[heap->cantidad_total]);
-		downheapear(heap->elementos, heap->comparador, heap->cantidad_total, 0);
+		if (heap->cantidad_total == 1){
+			heap->elementos[0] = heap->elementos[heap->cantidad_total];
+		}
+		else{
+			intercambio(heap->elementos[0], heap->elementos[heap->cantidad_total]);
+			downheapear(heap->elementos, heap->comparador, heap->cantidad_total + 1, 0);
+		}
 	}
 	if (hay_que_achicar(heap)){
 		void * nuevos_datos = redimensionar(heap, heap->tamanio / FACTOR_REDIMENSION);

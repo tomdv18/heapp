@@ -84,9 +84,12 @@ static void prueba_reemplazo_mayor(){
 	desen = heap_ver_max(heap);
 	print_test("Maximo correcto", (pt1 == desen));
 	heap_destruir(heap, NULL);
-
-
 }
+
+
+
+
+
 
 void  pruebas_heap_estudiante(){
 	pruebas_creado();
