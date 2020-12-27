@@ -83,6 +83,25 @@ static void prueba_reemplazo_mayor(){
 	print_test("Maximo correcto",(strcmp(segundo, (char*)desen) == 0));
 	heap_destruir(heap, NULL);
 }
+/*
+ * A diferencia de la anterior, esta funcion no reemplaza el elemento mayor tras
+ * insertar un nuevo elemento
+ */
+static void prueba_NO_reemplazo_mayor(){
+
+	char* primero = "aaa";
+	char* segundo = "bbb";
+
+	heap_t * heap = heap_crear(comparacion);
+	heap_encolar(heap, segundo);
+	print_test("Prueba cantidad correcta", heap_cantidad(heap) == 1);
+	void * desen = heap_ver_max(heap);
+	print_test("Maximo correcto",(strcmp(segundo, (char*)desen) == 0));
+	print_test("Insertar otro elemento", heap_encolar(heap, primero));
+	desen = heap_ver_max(heap);
+	print_test("Maximo correcto",(strcmp(segundo, (char*)desen) == 0));
+	heap_destruir(heap, NULL);
+}
 
 static void prueba_desencolado_mayor(){
 
@@ -116,13 +135,32 @@ static void prueba_heapsort(){
 
 }
 
+static void prueba_volumen_est(){
+	int tope = 5000;
+	int vector[tope];
+	heap_t * heap = heap_crear(comparacion);
+	bool ok = true;
+	int i = 0;
+	while (ok && i < tope){
+	ok = ok && (heap_cantidad(heap) == (i));
+	ok = ok && heap_encolar(heap, &vector[i]);
+	i++;
+	}
+	print_test("Prueba de volumen muchos elementos", ok);
+
+	heap_destruir(heap, NULL);
+}
+
+
 void pruebas_heap_estudiante(){
 	pruebas_creado();
 	prueba_crear_sin_funcion_comparacion();
 	prueba_encolado_desencolado_un_elemento();
 	prueba_encolado_un_elemento();
 	prueba_reemplazo_mayor();
+	prueba_NO_reemplazo_mayor();
 	prueba_desencolado_mayor();
 	prueba_heapsort();
+	prueba_volumen_est();
 
 }
