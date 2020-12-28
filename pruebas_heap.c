@@ -146,7 +146,12 @@ static void prueba_volumen_est(){
 	ok = ok && heap_encolar(heap, &vector[i]);
 	i++;
 	}
-	print_test("Prueba de volumen muchos elementos", ok);
+	print_test("Prueba de volumen insertar muchos elementos", ok);
+
+	for (int j = 0; j <= i; j++){
+		heap_desencolar(heap);
+	}
+	print_test("Prueba de volumen borrar muchos elementos", (heap_cantidad(heap) == 0));
 
 	heap_destruir(heap, NULL);
 }

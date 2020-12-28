@@ -1,5 +1,6 @@
 #include "heap.h" 
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h> 
 #include <string.h> 
 
@@ -142,13 +143,17 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 	Devuelve la posicion que es mayor a la actual,
 */
 size_t posicion_mayor(void **elementos, size_t cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
-    size_t posicion_maxima = posicion_act;
-    if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
-		posicion_maxima = pos_izq;
+    size_t posicion_maxima = 0;
+    posicion_maxima = posicion_act;
+    if (elementos[pos_izq]){ // YO TRATE DE INTENTAR QUE ACCEDA SOLAMENTE SI EXISTE, EL PROBLEMA ES QUE CUANDO SE REDIMENSIONA, SE RELLENA CON BASURA EL VECTOR, POR LO QUE ENTRA IGUAL
+ 	   if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
+			posicion_maxima = pos_izq;
+    	}
 	}
-
-    if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
-		posicion_maxima = pos_der;
+	if (elementos[pos_der]){
+    	if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
+			posicion_maxima = pos_der;	
+		}
 	}
 
     return posicion_maxima;
@@ -189,17 +194,23 @@ bool hay_que_agrandar(const heap_t * heap){
  * Devuelve verdadero si hay que redimensionar a un menor tamaño el heap
  */
 bool hay_que_achicar(const heap_t * heap){
-	return ((heap->cantidad_total/heap->tamanio <= FACTOR_REDUCCION) && heap->tamanio > TAMANIO_INICIAL);
+	return ((heap->cantidad_total < (heap->tamanio * FACTOR_REDUCCION)) && heap->tamanio > TAMANIO_INICIAL);
 
 }
 
 /*
  * Recibe un heap y el proximo tamaño a redimensionar
- * Devuelve un puntero a un nuevo vector de elementos con el proximo tamaño
+ * Actualiza el puntero a un nuevo vector de elementos con el proximo tamaño
  */
-void * redimensionar(heap_t * heap, size_t nuevo_tamanio){
-	void * datos = realloc(heap->elementos, sizeof(void *) *nuevo_tamanio);
-	return datos;
+int redimensionar(heap_t * heap, size_t nuevo_tamanio){
+	//printf("NUEVO %i \n", nuevo_tamanio);
+	void * datos = realloc(heap->elementos, nuevo_tamanio * sizeof(void *));
+	if (datos == NULL){
+		return -1;
+	}
+	heap->tamanio = nuevo_tamanio;
+	heap->elementos = datos;
+	return 0;
 }
 
 /* Agrega un elemento al heap. El elemento no puede ser NULL.
@@ -209,12 +220,10 @@ void * redimensionar(heap_t * heap, size_t nuevo_tamanio){
  */
 bool heap_encolar(heap_t *heap, void *elem){
 	if(hay_que_agrandar(heap)){
-		void * nuevo_vector = redimensionar(heap, heap->tamanio * FACTOR_REDIMENSION);
-		if (!nuevo_vector){
+		int agrandado = redimensionar(heap, (heap->tamanio * FACTOR_REDIMENSION));
+		if (agrandado == -1){
 			return false;
-		}
-		heap->tamanio = (heap->tamanio * FACTOR_REDIMENSION);
-		heap->elementos = nuevo_vector;		
+		}		
 	}
 	heap->elementos[heap->cantidad_total] = elem;
 	heap->cantidad_total++;
@@ -257,11 +266,10 @@ void *heap_desencolar(heap_t *heap){
 		}
 	}
 	if (hay_que_achicar(heap)){
-		void * nuevos_datos = redimensionar(heap, heap->tamanio / FACTOR_REDIMENSION);
-		if(!nuevos_datos){
+		int reducido = redimensionar(heap, heap->tamanio / FACTOR_REDIMENSION);
+		if(reducido == -1){
 			return NULL;
 		}
-		heap->elementos = nuevos_datos;
 	}
 	return dato;
 }
