@@ -261,8 +261,8 @@ void *heap_desencolar(heap_t *heap){
 			heap->elementos[0] = heap->elementos[heap->cantidad_total];
 		}
 		else{
-			intercambio(heap->elementos, 0, heap->cantidad_total + 1);
-			downheapear(heap->elementos, heap->comparador, heap->cantidad_total + 1, 0);
+			intercambio(heap->elementos, 0, heap->cantidad_total );
+			downheapear(heap->elementos, heap->comparador, heap->cantidad_total , 0);
 		}
 	}
 	if (hay_que_achicar(heap)){
@@ -278,8 +278,8 @@ void *heap_desencolar(heap_t *heap){
 /* Funcion que garantiza propiedad de heap */
 void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
 
-	int cant = (int)cantidad_elementos/2;
-    for(int i = cant; i >= 0; i--){
+	size_t cant = cantidad_elementos/2;
+    for(int i = (int)cant; i >= 0; i--){
         downheapear(elementos,cmp, cantidad_elementos, (size_t)i);
     }
 
