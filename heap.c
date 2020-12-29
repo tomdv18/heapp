@@ -145,12 +145,12 @@ void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
 size_t posicion_mayor(void **elementos, size_t cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
     size_t posicion_maxima = 0;
     posicion_maxima = posicion_act;
-    if (elementos[pos_izq]){ // YO TRATE DE INTENTAR QUE ACCEDA SOLAMENTE SI EXISTE, EL PROBLEMA ES QUE CUANDO SE REDIMENSIONA, SE RELLENA CON BASURA EL VECTOR, POR LO QUE ENTRA IGUAL
+    if (pos_izq != -1){ // YO TRATE DE INTENTAR QUE ACCEDA SOLAMENTE SI EXISTE, EL PROBLEMA ES QUE CUANDO SE REDIMENSIONA, SE RELLENA CON BASURA EL VECTOR, POR LO QUE ENTRA IGUAL
  	   if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
 			posicion_maxima = pos_izq;
     	}
 	}
-	if (elementos[pos_der]){
+	if (pos_der != -1){
     	if(pos_der < cantidad && cmp(elementos[posicion_maxima], elementos[pos_der]) < 0){
 			posicion_maxima = pos_der;	
 		}
@@ -171,6 +171,12 @@ void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, s
 	}
 	size_t pos_hijo_der  = (2 * posicion_act) + 2;
 	size_t pos_hijo_izq = (2 * posicion_act) + 1;
+	if (pos_hijo_izq > cantidad_elementos ){
+		pos_hijo_izq = -1;
+	}	
+	if (pos_hijo_der > cantidad_elementos ){
+		pos_hijo_der = -1;
+	}
 	size_t mayor_posicion  = posicion_mayor(elementos, cantidad_elementos, cmp, posicion_act, pos_hijo_izq, pos_hijo_der);
 
     if(mayor_posicion != posicion_act){
@@ -279,9 +285,9 @@ void *heap_desencolar(heap_t *heap){
 void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
 
 	size_t cant = cantidad_elementos/2;
-    for(int i = (int)cant; i >= 0; i--){
-        downheapear(elementos,cmp, cantidad_elementos, (size_t)i);
-    }
+    for(int i = (int)cant; i > 0; i--){
+        downheapear(elementos, cmp, cantidad_elementos, (size_t)i);
+    }	
 
 }
 

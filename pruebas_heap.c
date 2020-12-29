@@ -127,12 +127,11 @@ static void prueba_heapsort(){
 	char* ordenado[] = {"aaa","aax", "abb","bta", "btw", "ssd", "usb"};
 	char* elementos[] = {"aaa", "ssd","bta", "usb", "btw", "aax","abb"};
 	heap_sort((void**)elementos, cant, comparacion);
-	for (size_t i = 0; i < cant; ++i) {
+	for (size_t i = 0; i < cant; i++) {
 		
-		ok = strcmp(ordenado[i], elementos[i]) == 0;
+		ok = ok && strcmp(ordenado[i], elementos[i]) == 0;
 	}
 	print_test("Ordenamiento correcto usando Heapsort", ok);
-
 }
 
 static void prueba_volumen_est(){
