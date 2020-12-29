@@ -128,7 +128,7 @@ static void prueba_heapsort(){
 	char* elementos[] = {"aaa", "ssd","bta", "usb", "btw", "aax","abb"};
 	heap_sort((void**)elementos, cant, comparacion);
 	for (size_t i = 0; i < cant; i++) {
-		
+		//printf("es: %s \n",elementos[i]);
 		ok = ok && strcmp(ordenado[i], elementos[i]) == 0;
 	}
 	print_test("Ordenamiento correcto usando Heapsort", ok);

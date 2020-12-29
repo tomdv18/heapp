@@ -49,62 +49,6 @@ heap_t *heap_crear(cmp_func_t cmp){
 	}
 	return heap;
 }
-/*
- * Constructor alternativo del heap. Además de la función de comparación,
- * recibe un arreglo de valores con que inicializar el heap. Complejidad
- * O(n).
- *
- * Excepto por la complejidad, es equivalente a crear un heap vacío y encolar
- * los valores de uno en uno
- */
-heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
-		if (cmp == NULL){
-		return NULL;
-	}
-	heap_t * heap = malloc(sizeof(heap_t));
-	if (heap){
-		heap->elementos = malloc(n * sizeof(void*));
-		if (!heap->elementos){
-			free(heap);
-			return NULL;
-		}
-		heap_sort(arreglo, n, cmp);
-		memcpy(heap->elementos, arreglo, n* sizeof(void*));
-		heap->cantidad_total = n;
-		heap->tamanio = heap->cantidad_total;
-		heap->comparador = cmp;
-	}
-	return heap;
-}
-
-
-/* Elimina el heap, llamando a la función dada para cada elemento del mismo.
- * El puntero a la función puede ser NULL, en cuyo caso no se llamará.
- * Post: se llamó a la función indicada con cada elemento del heap. El heap
- * dejó de ser válido. */
-void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){	
-	if (destruir_elemento != NULL){
-		size_t i = heap->cantidad_total - 1;
-		while(!heap_esta_vacio(heap)){
-			destruir_elemento(heap->elementos[i]);
-			heap->cantidad_total--;
-			i--;
-		}
-	}
-	free(heap->elementos);
-	free(heap);
-}
-
-/* Devuelve la cantidad de elementos que hay en el heap. */
-size_t heap_cantidad(const heap_t *heap){
-	return heap->cantidad_total;
-}
-/* Devuelve true si la cantidad de elementos que hay en el heap es 0, false en
- * caso contrario. 
- */
-bool heap_esta_vacio(const heap_t *heap){
-	return(heap->cantidad_total == 0);
-}
 
 /*
  * Esta funcion intercambia de lugar dos valores
@@ -116,27 +60,6 @@ void intercambio(void ** elementos, size_t primero, size_t segundo) {
 	elementos[segundo] = auxiliar; 
 }
 
-
-/*
- *Funcion que aplica upheap al vector de elementos
- * Pre: Recibe un vector de elementos, la posicion actual 
- * y una funcion de comparacion de elementos previamente vàlidos
- */
-void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
-	  
-    if (posicion_act == 0){
-        return;
-	}
-
-	size_t posicion_padre = (posicion_act - 1) / 2;
-    
-    if (cmp(elementos[posicion_act], elementos[posicion_padre]) > 0) {
-        intercambio(elementos, posicion_act, posicion_padre);
-        upheapear(elementos, posicion_padre, cmp);
-    }
-
-
-}
 
 /*
 	Recibe, el vector de elementos, la cantidad, la funcion de comparacion, la posicion actual y las de su izquierda y derecha para asi comparar.
@@ -188,6 +111,97 @@ void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, s
 
 
 
+/* Funcion que garantiza propiedad de heap */
+void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
+
+	size_t cant = cantidad_elementos/2;
+    for(int i = (int)cant; i >= 0; i--){
+        downheapear(elementos, cmp, cantidad_elementos, (size_t)i);
+    }	
+
+}
+
+/*
+ * Constructor alternativo del heap. Además de la función de comparación,
+ * recibe un arreglo de valores con que inicializar el heap. Complejidad
+ * O(n).
+ *
+ * Excepto por la complejidad, es equivalente a crear un heap vacío y encolar
+ * los valores de uno en uno
+ */
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
+		if (cmp == NULL){
+		return NULL;
+	}
+	heap_t * heap = malloc(sizeof(heap_t));
+	if (heap){
+		heap->elementos = calloc(n,sizeof(void*));
+		if (!heap->elementos){
+			free(heap);
+			return NULL;
+		}
+		heapify(arreglo, n, cmp);
+		memcpy(heap->elementos, arreglo, n* sizeof(void*));
+		heap->cantidad_total = n;
+		heap->tamanio = heap->cantidad_total;
+		heap->comparador = cmp;
+	}
+	return heap;
+}
+
+
+/* Elimina el heap, llamando a la función dada para cada elemento del mismo.
+ * El puntero a la función puede ser NULL, en cuyo caso no se llamará.
+ * Post: se llamó a la función indicada con cada elemento del heap. El heap
+ * dejó de ser válido. */
+void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){	
+	if (destruir_elemento != NULL){
+		size_t i = heap->cantidad_total - 1;
+		while(!heap_esta_vacio(heap)){
+			destruir_elemento(heap->elementos[i]);
+			heap->cantidad_total--;
+			i--;
+		}
+	}
+	free(heap->elementos);
+	free(heap);
+}
+
+/* Devuelve la cantidad de elementos que hay en el heap. */
+size_t heap_cantidad(const heap_t *heap){
+	return heap->cantidad_total;
+}
+/* Devuelve true si la cantidad de elementos que hay en el heap es 0, false en
+ * caso contrario. 
+ */
+bool heap_esta_vacio(const heap_t *heap){
+	return(heap->cantidad_total == 0);
+}
+
+
+
+/*
+ *Funcion que aplica upheap al vector de elementos
+ * Pre: Recibe un vector de elementos, la posicion actual 
+ * y una funcion de comparacion de elementos previamente vàlidos
+ */
+void upheapear(void ** elementos, size_t posicion_act, cmp_func_t cmp){
+	  
+    if (posicion_act == 0){
+        return;
+	}
+
+	size_t posicion_padre = (posicion_act - 1) / 2;
+    
+    if (cmp(elementos[posicion_act], elementos[posicion_padre]) > 0) {
+        intercambio(elementos, posicion_act, posicion_padre);
+        upheapear(elementos, posicion_padre, cmp);
+    }
+
+
+}
+
+
 
 /*
  *Devuelve verdadero si hay que redimensionar a un mayor tamaño el heap
@@ -200,7 +214,7 @@ bool hay_que_agrandar(const heap_t * heap){
  * Devuelve verdadero si hay que redimensionar a un menor tamaño el heap
  */
 bool hay_que_achicar(const heap_t * heap){
-	return ((heap->cantidad_total < (heap->tamanio * FACTOR_REDUCCION)) && heap->tamanio > TAMANIO_INICIAL);
+	return ((heap->cantidad_total < ((double)heap->tamanio * FACTOR_REDUCCION)) && heap->tamanio > TAMANIO_INICIAL);
 
 }
 
@@ -281,15 +295,7 @@ void *heap_desencolar(heap_t *heap){
 }
 
 // -----------------------------------------------------------------------------//
-/* Funcion que garantiza propiedad de heap */
-void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
 
-	size_t cant = cantidad_elementos/2;
-    for(int i = (int)cant; i > 0; i--){
-        downheapear(elementos, cmp, cantidad_elementos, (size_t)i);
-    }	
-
-}
 
 /* Función de heapsort genérica. Esta función ordena mediante heap_sort
  * un arreglo de punteros opacos, para lo cual requiere que se
@@ -297,6 +303,8 @@ void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
  * Nótese que esta función NO es formalmente parte del TAD Heap.
  */
 void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
+	if (!elementos || cant == 0)
+        return;
 	//primero siempre convierto el arreglo en heap
 	heapify(elementos,cant,cmp);
 

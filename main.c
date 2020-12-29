@@ -1,4 +1,3 @@
-
 //#define CORRECTOR // Hay que eliminar esta linea para enviar
 #include "testing.h"
 
