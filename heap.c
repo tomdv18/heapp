@@ -109,8 +109,6 @@ void downheapear(void ** elementos, cmp_func_t cmp, size_t cantidad_elementos, s
 }
 
 
-
-
 /* Funcion que garantiza propiedad de heap */
 void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
 
@@ -119,34 +117,6 @@ void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
         downheapear(elementos, cmp, cantidad_elementos, (size_t)i);
     }	
 
-}
-
-/*
- * Constructor alternativo del heap. Además de la función de comparación,
- * recibe un arreglo de valores con que inicializar el heap. Complejidad
- * O(n).
- *
- * Excepto por la complejidad, es equivalente a crear un heap vacío y encolar
- * los valores de uno en uno
- */
-heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
-		if (cmp == NULL){
-		return NULL;
-	}
-	heap_t * heap = malloc(sizeof(heap_t));
-	if (heap){
-		heap->elementos = calloc(n,sizeof(void*));
-		if (!heap->elementos){
-			free(heap);
-			return NULL;
-		}
-		heapify(arreglo, n, cmp);
-		memcpy(heap->elementos, arreglo, n* sizeof(void*));
-		heap->cantidad_total = n;
-		heap->tamanio = heap->cantidad_total;
-		heap->comparador = cmp;
-	}
-	return heap;
 }
 
 
@@ -294,6 +264,35 @@ void *heap_desencolar(heap_t *heap){
 	return dato;
 }
 
+/*
+ * Constructor alternativo del heap. Además de la función de comparación,
+ * recibe un arreglo de valores con que inicializar el heap. Complejidad
+ * O(n).
+ *
+ * Excepto por la complejidad, es equivalente a crear un heap vacío y encolar
+ * los valores de uno en uno
+ */
+heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
+		if (cmp == NULL){
+		return NULL;
+	}
+	heap_t * heap = malloc(sizeof(heap_t));
+	if (heap){
+		heap->elementos = malloc(n * 2 * sizeof(void*));
+		if (!heap->elementos){
+			free(heap);
+			return NULL;
+		}
+		heapify(arreglo, n, cmp);
+		memcpy(heap->elementos, arreglo, n* sizeof(void*));
+		heap->cantidad_total = n;
+		heap->tamanio = n * 2;
+		heap->comparador = cmp;
+	}
+	return heap;
+}
+
+
 // -----------------------------------------------------------------------------//
 
 
@@ -314,3 +313,5 @@ void heap_sort(void *elementos[], size_t cant, cmp_func_t cmp){
     }
 
 }
+
+
