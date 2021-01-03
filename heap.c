@@ -38,7 +38,7 @@ heap_t *heap_crear(cmp_func_t cmp){
 	}
 	heap_t * heap = malloc(sizeof(heap_t));
 	if (heap){
-		heap->elementos = malloc(TAMANIO_INICIAL * sizeof(void*));
+		heap->elementos = calloc(TAMANIO_INICIAL, sizeof(void*));
 		if (!heap->elementos){
 			free(heap);
 			return NULL;
@@ -126,7 +126,7 @@ void heapify(void** elementos, size_t cantidad_elementos, cmp_func_t cmp){
  * dejó de ser válido. */
 void heap_destruir(heap_t *heap, void (*destruir_elemento)(void *e)){	
 	if (destruir_elemento != NULL){
-		size_t i = heap->cantidad_total - 1;
+		size_t i = heap->cantidad_total;
 		while(!heap_esta_vacio(heap)){
 			destruir_elemento(heap->elementos[i]);
 			heap->cantidad_total--;
@@ -278,13 +278,13 @@ heap_t *heap_crear_arr(void *arreglo[], size_t n, cmp_func_t cmp){
 	}
 	heap_t * heap = malloc(sizeof(heap_t));
 	if (heap){
-		heap->elementos = malloc(n * 2 * sizeof(void*));
+		heap->elementos = calloc(n * 2, sizeof(void*));
 		if (!heap->elementos){
 			free(heap);
 			return NULL;
 		}
-		heapify(arreglo, n, cmp);
 		memcpy(heap->elementos, arreglo, n* sizeof(void*));
+		heapify(heap->elementos, n, cmp);
 		heap->cantidad_total = n;
 		heap->tamanio = n * 2;
 		heap->comparador = cmp;
