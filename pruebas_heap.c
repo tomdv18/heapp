@@ -158,10 +158,14 @@ static void prueba_volumen_est(){
 static void crear_a_partir_array(){
 	size_t n = 9;
 	int vector[9] = { 25, 36, 11, 9, 333, 777, 18, 8, 20}; 
+	int valor = 49;
 
 	heap_t * heap = heap_crear_arr((void*)vector, n, comparacion);
 	print_test("Heap creado a partir de arreglo", (heap));
 	print_test("Heap cantidad a partir de arreglo correcta", (heap_cantidad(heap) == 9));
+	print_test("Insertar otro elemento en un array", heap_encolar(heap, &valor));
+
+
 	heap_destruir(heap, NULL);
 }
 */

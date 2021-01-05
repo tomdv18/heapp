@@ -1,6 +1,5 @@
 //#define CORRECTOR // Hay que eliminar esta linea para enviar
 #include "testing.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,8 +11,8 @@ void pruebas_heap_volumen_catedra(size_t, bool);
  *                        PROGRAMA PRINCIPAL
  * *****************************************************************/
 
-#ifdef CORRECTOR
 int main(int argc, char *argv[]) {
+#ifdef CORRECTOR
     if (argc > 1) {
         // Asumimos que nos están pidiendo pruebas de volumen.
         long largo = strtol(argv[1], NULL, 10);
@@ -25,10 +24,10 @@ int main(int argc, char *argv[]) {
     printf("~~~ PRUEBAS ESTUDIANTE ~~~\n");
     pruebas_heap_estudiante();
     printf("\n~~~ PRUEBAS CÁTEDRA ~~~\n");
-    //
+    // 
     pruebas_heap_catedra();
+#endif
 
     return failure_count() > 0;
 }
-#endif
 //aaaaaaa
