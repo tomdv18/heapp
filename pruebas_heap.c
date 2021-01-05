@@ -128,7 +128,7 @@ static void prueba_heapsort(){
 	char* elementos[] = {"aaa", "ssd","bta", "usb", "btw", "aax","abb"};
 	heap_sort((void**)elementos, cant, comparacion);
 	for (size_t i = 0; i < cant; i++) {
-		//printf("es: %s \n",elementos[i]);
+		
 		ok = ok && strcmp(ordenado[i], elementos[i]) == 0;
 	}
 	print_test("Ordenamiento correcto usando Heapsort", ok);
@@ -154,21 +154,7 @@ static void prueba_volumen_est(){
 
 	heap_destruir(heap, NULL);
 }
-/*
-static void crear_a_partir_array(){
-	size_t n = 9;
-	int vector[9] = { 25, 36, 11, 9, 333, 777, 18, 8, 20}; 
-	int valor = 49;
 
-	heap_t * heap = heap_crear_arr((void*)vector, n, comparacion);
-	print_test("Heap creado a partir de arreglo", (heap));
-	print_test("Heap cantidad a partir de arreglo correcta", (heap_cantidad(heap) == 9));
-	print_test("Insertar otro elemento en un array", heap_encolar(heap, &valor));
-
-
-	heap_destruir(heap, NULL);
-}
-*/
 void pruebas_heap_estudiante(){
 	pruebas_creado();
 	prueba_crear_sin_funcion_comparacion();
@@ -179,13 +165,20 @@ void pruebas_heap_estudiante(){
 	prueba_desencolado_mayor();
 	prueba_heapsort();
 	prueba_volumen_est();
-	//crear_a_partir_array();
 
 }
 
 
 /*
-gcc -g -O2 -std=gnu11 -Wall -pedantic -Wformat=2 -Wshadow -Wpointer-arith -Wunreachable-code -Wconversion -Wno-sign-conversion -Wbad-function-cast -Wdiscarded-qualifiers -o pruebas *.c
+ * Función main() que llama a la función de pruebas.
+ */
 
+#ifndef CORRECTOR // Para que no dé conflicto con el main() del corrector.
 
-*/
+int main(void)
+{
+    pruebas_heap_estudiante();
+    return failure_count() > 0; // Indica si falló alguna prueba.
+}
+
+#endif

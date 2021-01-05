@@ -68,7 +68,7 @@ void intercambio(void ** elementos, size_t primero, size_t segundo) {
 size_t posicion_mayor(void **elementos, size_t cantidad, cmp_func_t cmp, size_t posicion_act, size_t pos_izq, size_t pos_der) {
     size_t posicion_maxima = 0;
     posicion_maxima = posicion_act;
-    if (pos_izq != -1){ // YO TRATE DE INTENTAR QUE ACCEDA SOLAMENTE SI EXISTE, EL PROBLEMA ES QUE CUANDO SE REDIMENSIONA, SE RELLENA CON BASURA EL VECTOR, POR LO QUE ENTRA IGUAL
+    if (pos_izq != -1){ 
  	   if(pos_izq < cantidad && cmp(elementos[posicion_maxima], elementos[pos_izq]) < 0){
 			posicion_maxima = pos_izq;
     	}
